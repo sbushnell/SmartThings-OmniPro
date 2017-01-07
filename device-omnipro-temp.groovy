@@ -14,7 +14,7 @@
  *
  */
 metadata {
-	definition (name: "OmniPro Temp", namespace: "excaliburpartners", author: "Ryan Wagoner") {
+	definition (name: "OmniPro Temp", namespace: "Scott Bushnell", author: "Scott Bushnell") {
 		capability "Temperature Measurement"
 		capability "Refresh"
 	}
@@ -25,15 +25,15 @@ metadata {
 
 	tiles {
 		valueTile("temperature", "device.temperature", width: 2, height: 2) {
-			state("temperature", label:'${currentValue}°', unit:'F',
+			state("temperature", label:'${currentValue}°', unit:'C',
 				backgroundColors:[
-					[value: 31, color: "#153591"],
-					[value: 44, color: "#1e9cbb"],
-					[value: 59, color: "#90d2a7"],
-					[value: 74, color: "#44b621"],
-					[value: 84, color: "#f1d801"],
-					[value: 95, color: "#d04e00"],
-					[value: 96, color: "#bc2323"]
+					[value: 10, color: "#153591"],
+					[value: 15, color: "#1e9cbb"],
+					[value: 20, color: "#90d2a7"],
+					[value: 25, color: "#44b621"],
+					[value: 30, color: "#f1d801"],
+					[value: 35, color: "#d04e00"],
+					[value: 40, color: "#bc2323"]
 				]
 			)
 		}
@@ -56,6 +56,13 @@ def parse(String description) {
 
 def parseFromParent(data) {
 	log.debug "Parsing from parent '${data}'"
+    
+    int celtemp = (data.temp).toInteger()
+    celtemp = ((celtemp - 32)*5)/9
+  
+  log.debug "Cel Temp '${celtemp}'"
+  data.temp = celtemp.toString()
+  log.debug "data.temp '${data.temp}'"
 	sendEvent(name: "temperature", value: data.temp, displayed: false)
 }
 
