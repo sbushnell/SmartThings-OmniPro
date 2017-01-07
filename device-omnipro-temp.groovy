@@ -14,7 +14,7 @@
  *
  */
 metadata {
-	definition (name: "OmniPro Temp", namespace: "Scott Bushnell", author: "Scott Bushnell") {
+	definition (name: "OmniPro Temp", namespace: "excaliburpartners", author: "Scott Bushnell") {
 		capability "Temperature Measurement"
 		capability "Refresh"
 	}
