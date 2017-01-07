@@ -1,0 +1,75 @@
+/**
+*
+*
+*
+*
+* Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+* in compliance with the License. You may obtain a copy of the License at:
+*
+* http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software distributed under the License is distributed
+* on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License
+* for the specific language governing permissions and limitations under the License.
+*
+*/
+definition(
+name: "Air Conditioning",
+namespace: "Scott Bushnell",
+author: "Scott Bushnell",
+description: "SmartApp to turn Air Conditioning ON & OFF.",
+category: "Convenience",
+iconUrl: "https://s3.amazonaws.com/smartapp-icons/Convenience/Cat-Convenience.png",
+iconX2Url: "https://s3.amazonaws.com/smartapp-icons/Convenience/Cat-Convenience@2x.png",
+iconX3Url: "https://s3.amazonaws.com/smartapp-icons/Convenience/Cat-Convenience@2x.png")
+
+preferences {
+section("When this switch is turned on, send the command.") {
+input "onoff", "capability.switch", title: "Which switch?", required: true
+}
+
+
+section("When this Button is Pressed, send the command.") {
+input "testbutton", "capability.button", title: "Which Button?", required: true
+}
+
+}
+
+def installed() {
+log.debug "Installed with settings: ${settings}"
+initialize()
+}
+
+def updated() {
+log.debug "Updated with settings: ${settings}"
+unsubscribe()
+initialize()
+}
+
+def initialize() {
+subscribe(onoff, "switch.on", switchOnHandler)
+
+subscribe(onoff, "switch.off", switchOffHandler)
+
+subscribe(testbutton, "button.pushed", switchOffHandler)
+}
+
+def switchOnHandler(evt) {
+def deviceNetworkId = "C0A80146:1386"
+
+// ON
+def theCom = "sendir,1:1,1,37735,1,1,338,170,22,64,22,64,22,21,21,21,22,21,21,21,22,64,22,65,22,64,22,64,22,64,22,21,23,64,22,20,22,21,22,65,21,65,21,21,22,64,22,65,21,21,22,64,22,64,22,65,22,20,22,21,22,64,22,20,22,21,22,64,22,21,22,21,21,21,22,21,21,21,22,20,22,21,22,64,22,21,22,64,22,21,21,21,22,21,21,21,22,21,21,21,22,21,22,21,21,21,22,20,22,21,22,20,22,21,22,64,22,21,22,21,21,21,22,21,21,21,22,20,22,21,22,20,22,21,22,21,22,20,22,21,23,20,22,21,22,20,22,21,21,21,22,21,22,21,23,20,22,21,21,21,22,21,21,65,21,21,22,21,22,21,22,20,22,21,21,21,22,21,21,21,22,21,22,21,21,65,22,20,22,64,22,21,22,20,22,21,22,20,22,21,22,21,22,20,22,21,20,21,22,64,22,21,21,65,22,21,21,3773\r"
+
+sendHubCommand(new physicalgraph.device.HubAction("""$theCom\r\n""", physicalgraph.device.Protocol.LAN, "${deviceNetworkId}"))
+log.trace "Air ON Sent"
+}
+
+def switchOffHandler(evt) {
+def deviceNetworkId = "C0A80146:1386"
+
+// OFF
+def theCom = "sendir,1:1,1,37735,1,1,338,170,22,64,22,64,22,21,22,20,22,21,21,21,22,64,22,65,22,64,22,64,22,64,22,64,22,65,21,21,22,21,23,64,22,21,23,20,22,64,22,65,21,21,22,64,22,64,22,65,22,64,22,64,22,21,21,65,22,64,22,20,22,21,22,21,22,20,22,21,22,20,22,21,23,20,22,64,22,21,22,65,21,21,22,21,21,21,22,20,22,21,22,20,22,21,22,21,22,20,22,21,22,20,22,21,22,20,22,64,22,21,22,21,22,20,22,21,22,20,22,21,23,20,22,21,22,20,22,21,22,21,22,20,22,21,21,21,22,21,21,21,22,21,23,21,21,21,22,21,21,21,22,20,22,21,22,20,22,21,22,21,22,20,22,21,22,20,22,21,23,20,22,21,22,20,22,21,22,64,22,21,22,64,22,20,22,21,22,20,22,21,22,21,22,20,22,65,21,65,22,64,23,20,22,64,22,21,22,21,21,3773\r"
+
+sendHubCommand(new physicalgraph.device.HubAction("""$theCom\r\n""", physicalgraph.device.Protocol.LAN, "${deviceNetworkId}"))
+log.trace "Air OFF Sent"
+}
